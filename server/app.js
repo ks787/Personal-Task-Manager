@@ -8,7 +8,10 @@ const errorHandler = require('./middleware/errorHandler');
 const app = express();
 
 // Allow cross-origin requests from the React dev server (or deployed frontend)
-const allowedOrigin = process.env.CORS_ORIGIN || 'http://localhost:5173';
+let allowedOrigin = process.env.CORS_ORIGIN || 'http://localhost:5173';
+if (allowedOrigin.endsWith('/')) {
+  allowedOrigin = allowedOrigin.slice(0, -1);
+}
 app.use(cors({ origin: allowedOrigin }));
 
 app.use(express.json());
