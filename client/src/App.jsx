@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
 import { useTasks } from './hooks/useTasks';
 import TaskForm from './components/TaskForm';
 import TaskList from './components/TaskList';
-import SearchBar from './components/SearchBar';
 import FilterTabs from './components/FilterTabs';
+import SearchBar from './components/SearchBar';
 import TaskStats from './components/TaskStats';
 import ConfirmDialog from './components/ConfirmDialog';
+import Toast from './components/Toast';
 
-function App() {
+/**
+ * Root layout — wires the useTasks hook to all child components.
+ * No data fetching happens here; App is purely structural.
+ */
+export default function App() {
   const {
     loading,
     error,
@@ -16,11 +20,11 @@ function App() {
     editingTask,
     confirmDelete,
     toast,
-    deletingTaskId,
     filteredTasks,
     activeCount,
     completedCount,
     isOverdue,
+    deletingTaskId,
     addTask,
     saveEdit,
     toggleTask,
@@ -33,67 +37,86 @@ function App() {
     setToast,
   } = useTasks();
 
-  const [isAdding, setIsAdding] = useState(false);
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50" role="status" aria-label="Loading tasks">
+        <div className="flex flex-col items-center gap-4">
+          <svg
+            className="animate-spin h-10 w-10 text-blue-600"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+          </svg>
+          <p className="text-slate-500 text-sm font-medium">Loading your tasks…</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 p-4 md:p-8">
-      <div className="max-w-3xl mx-auto space-y-6">
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <h1 className="text-3xl font-bold text-slate-900">Task Manager</h1>
-          <button 
-            onClick={() => setIsAdding(!isAdding)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium shadow-sm"
+    <div className="min-h-screen bg-slate-50">
+      {/* Header */}
+      <header className="bg-white border-b border-slate-200 shadow-sm">
+        <div className="max-w-2xl mx-auto px-4 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+              Personal Task Manager
+            </h1>
+          </div>
+          <TaskStats activeCount={activeCount} completedCount={completedCount} />
+        </div>
+      </header>
+
+      {/* Main content */}
+      <main className="max-w-2xl mx-auto px-4 py-6 space-y-5">
+
+        {/* Error banner */}
+        {error && (
+          <div
+            role="alert"
+            className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 flex items-start gap-2"
           >
-            {isAdding ? 'Cancel' : 'Add Task'}
-          </button>
-        </header>
-
-        <TaskStats activeCount={activeCount} completedCount={completedCount} />
-
-        {isAdding && (
-          <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-            <TaskForm 
-              initialValues={{ title: '', description: '', dueDate: '' }}
-              onSubmit={async (payload) => {
-                await addTask(payload);
-                setIsAdding(false);
-              }}
-              onCancel={() => setIsAdding(false)}
-              isLoading={loading}
-            />
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0 text-red-500 mt-0.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            <span>{error}</span>
           </div>
         )}
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-          <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+        {/* Search + Filter row */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex-1">
+            <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+          </div>
           <FilterTabs filter={filter} onFilterChange={setFilter} />
         </div>
 
-        {error && (
-          <div className="p-4 bg-red-50 text-red-600 rounded-lg border border-red-200 font-medium">
-            {error}
-          </div>
-        )}
+        {/* Add task form */}
+        <TaskForm onSubmit={addTask} isLoading={false} />
 
-        <main>
-          <TaskList
-            tasks={filteredTasks}
-            editingTask={editingTask}
-            isOverdue={isOverdue}
-            deletingTaskId={deletingTaskId}
-            filter={filter}
-            searchQuery={searchQuery}
-            isLoading={loading}
-            onToggle={toggleTask}
-            onEdit={setEditingTask}
-            onDelete={setConfirmDelete}
-            onSaveEdit={saveEdit}
-            onCancelEdit={() => setEditingTask(null)}
-            onReorder={reorderTasks}
-          />
-        </main>
-      </div>
+        {/* Task list */}
+        <TaskList
+          tasks={filteredTasks}
+          editingTask={editingTask}
+          isOverdue={isOverdue}
+          deletingTaskId={deletingTaskId}
+          filter={filter}
+          searchQuery={searchQuery}
+          isLoading={false}
+          onToggle={toggleTask}
+          onEdit={setEditingTask}
+          onDelete={setConfirmDelete}
+          onSaveEdit={saveEdit}
+          onCancelEdit={() => setEditingTask(null)}
+          onReorder={reorderTasks}
+        />
+      </main>
 
+      {/* Delete confirmation modal */}
       {confirmDelete && (
         <ConfirmDialog
           task={confirmDelete}
@@ -102,16 +125,14 @@ function App() {
         />
       )}
 
+      {/* Toast notification */}
       {toast && (
-        <div className={`fixed bottom-4 right-4 p-4 rounded-lg shadow-lg text-white font-medium flex items-center gap-3 transition-opacity duration-300 ${toast.type === 'error' ? 'bg-red-600' : 'bg-green-600'}`}>
-          <span>{toast.message}</span>
-          <button onClick={() => setToast(null)} className="opacity-75 hover:opacity-100 text-xl leading-none">
-            &times;
-          </button>
-        </div>
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onDismiss={() => setToast(null)}
+        />
       )}
     </div>
   );
 }
-
-export default App;
