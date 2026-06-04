@@ -184,3 +184,4 @@ export function useTasks() {
     setToast,
   };
 }
+// Added toast support
