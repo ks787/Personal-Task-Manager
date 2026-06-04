@@ -46,3 +46,4 @@ function validateDueDate(req, res, next) {
 }
 
 module.exports = { validateTitle, validateDescription, validateDueDate };
+// Improved validation

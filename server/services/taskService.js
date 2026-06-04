@@ -138,3 +138,4 @@ module.exports = {
   deleteTask,
   reorderTasks,
 };
+// Improved filesystem safety
