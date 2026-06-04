@@ -5,7 +5,7 @@
 This project is a full-stack personal task manager application chosen to demonstrate proficiency in building modern web applications. It allows users to create, read, update, delete, and reorder tasks. The application features a clean, responsive user interface with drag-and-drop capabilities for task prioritization, and relies on a lightweight Node.js/Express backend that persists data securely to a local JSON file. 
 
 ## Live Demo Links
-- **Frontend (Vercel):** [https://client-xi-bice.vercel.app](https://client-xi-bice.vercel.app)
+- **Frontend (Vercel):** [https://client-ks787s-projects.vercel.app/](https://client-ks787s-projects.vercel.app/)
 - **Backend API (Render):** [https://personal-task-manager-api-q11f.onrender.com](https://personal-task-manager-api-q11f.onrender.com)
 
 ## Tech Stack
