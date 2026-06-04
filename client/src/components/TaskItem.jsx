@@ -28,7 +28,7 @@ export default function TaskItem({
       {/* Drag handle */}
       {!isDragDisabled && dragListeners && dragAttributes && (
         <div
-          className="pt-0.5 flex-shrink-0 cursor-grab active:cursor-grabbing text-slate-300 hover:text-slate-500 transition-colors"
+          className="pt-0.5 flex-shrink-0 cursor-grab active:cursor-grabbing text-slate-300 hover:text-slate-500 transition-colors touch-none"
           {...dragAttributes}
           {...dragListeners}
           aria-label="Drag to reorder"
