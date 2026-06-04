@@ -1,13 +1,27 @@
 # Personal Task Manager
 
-## Project Overview
-A full-stack personal task manager built with a React + Vite frontend and an Express REST API backend. It uses a flat JSON file for data persistence.
+## Project Title & Brief Description
+**Personal Task Manager**
+This project is a full-stack personal task manager application chosen to demonstrate proficiency in building modern web applications. It allows users to create, read, update, delete, and reorder tasks. The application features a clean, responsive user interface with drag-and-drop capabilities for task prioritization, and relies on a lightweight Node.js/Express backend that persists data securely to a local JSON file. 
 
-## Live Links
-- **Live Frontend URL:** [https://personal-task-manager-ecru-phi.vercel.app](https://personal-task-manager-ecru-phi.vercel.app)
-- **Live Backend URL:** [https://personal-task-manager-api-r2b6.onrender.com](https://personal-task-manager-api-r2b6.onrender.com)
+## Live Demo Links
+- **Frontend (Vercel):** [https://client-xi-bice.vercel.app](https://client-xi-bice.vercel.app)
+- **Backend API (Render):** [https://personal-task-manager-api-r2b6.onrender.com](https://personal-task-manager-api-r2b6.onrender.com)
 
-## Local Setup Instructions
+## Tech Stack
+- **Frontend:** 
+  - **React:** Used for building a dynamic, component-driven user interface.
+  - **Vite:** Chosen as the build tool for its incredibly fast hot module replacement (HMR) and optimized production builds.
+  - **Tailwind CSS:** Utilized for rapid, utility-first styling to create a responsive and modern design without writing custom CSS files.
+  - **@dnd-kit:** Implemented for accessible and smooth drag-and-drop functionality to reorder tasks.
+- **Backend:**
+  - **Node.js & Express:** Selected for the server environment due to its lightweight, non-blocking architecture and seamless JavaScript integration with the frontend.
+  - **Cors:** Used to securely handle cross-origin requests between the Vercel frontend and Render backend.
+  - **Jest & Supertest:** Utilized for robust automated API testing.
+- **Storage:** Local flat JSON file (`tasks.json`) was chosen over a full database to keep the backend lightweight and extremely fast for a personal-scale application.
+
+## How to Run Locally
+*Ensure you have Node.js installed before proceeding.*
 
 1. **Clone the repository:**
    ```bash
@@ -15,69 +29,69 @@ A full-stack personal task manager built with a React + Vite frontend and an Exp
    cd Project-
    ```
 
-2. **Frontend Setup:**
-   ```bash
-   cd client
-   npm install
-   cp .env.example .env # Set your local environment variables
-   npm run dev
-   ```
-
-3. **Backend Setup:**
+2. **Start the Backend Server:**
    ```bash
    cd server
    npm install
-   cp .env.example .env # Set your local environment variables
    npm start
    ```
+   *(The server will run on `http://localhost:3001`)*
 
-## Environment Variables
-
-### Client (`client/.env`)
-- `VITE_API_URL`: The URL of your backend API. For local development, this defaults to `http://localhost:3001/api`. For production, it must include `/api` at the end (e.g., `https://your-backend.onrender.com/api`).
-
-### Server (`server/.env`)
-- `PORT`: Port to run the server on (defaults to 3001).
-- `CORS_ORIGIN`: Allowed origin for CORS (e.g., `https://your-frontend.vercel.app`).
-- `TASKS_FILE`: Custom path for tasks JSON file (optional).
-
-## Deployment Instructions
-
-### Frontend Deployment (Vercel)
-1. Log in to [Vercel](https://vercel.com) and click **Add New Project**.
-2. Connect your GitHub repository and select it.
-3. Set the **Framework Preset** to `Vite` (it usually auto-detects this).
-4. Set the **Root Directory** to `client`.
-5. Configure the Build and Output Settings:
-   - **Build Command:** `npm run build`
-   - **Output Directory:** `dist`
-6. Expand **Environment Variables** and add:
-   - `VITE_API_URL`: `https://your-backend.onrender.com/api` (Replace with your actual backend URL)
-7. Click **Deploy**.
-
-### Backend Deployment (Render)
-1. Log in to [Render](https://render.com) and click **New +** -> **Web Service**.
-2. Connect your GitHub repository and select it.
-3. Set the **Root Directory** to `server`.
-4. Configure the following settings:
-   - **Environment:** `Node`
-   - **Build Command:** `npm install`
-   - **Start Command:** `npm start`
-5. Expand **Advanced** and add your Environment Variables:
-   - `PORT`: (Render sets this automatically, but you can set it if you prefer)
-   - `NODE_ENV`: `production`
-6. Click **Create Web Service**.
+3. **Start the Frontend Development Server:**
+   Open a **new terminal window/tab**, and run:
+   ```bash
+   cd client
+   npm install
+   npm run dev
+   ```
+   *(The frontend will be available at `http://localhost:5173`)*
 
 ## API Documentation
-- `GET /api/tasks`: List tasks
-- `POST /api/tasks`: Create task
-- `PUT /api/tasks/:id`: Update task
-- `PATCH /api/tasks/:id/toggle`: Toggle completion
-- `PATCH /api/tasks/reorder`: Reorder tasks
-- `DELETE /api/tasks/:id`: Delete task
+Base URL (Local): `http://localhost:3001/api`
 
-## Testing Instructions
-```bash
-cd server
-npm test
+| Method | Path | Description | Request Body | Response Shape |
+|--------|------|-------------|--------------|----------------|
+| **GET** | `/tasks` | List all tasks | None | `{ tasks: [{ id, title, description, dueDate, completed, createdAt, updatedAt }] }` |
+| **POST** | `/tasks` | Create a new task | `{ title: string, description?: string, dueDate?: string }` | `{ task: { ...TaskObject } }` |
+| **PUT** | `/tasks/:id` | Update an existing task | `{ title: string, description: string, dueDate: string }` | `{ task: { ...TaskObject } }` |
+| **PATCH** | `/tasks/:id/toggle` | Toggle task completion | None | `{ task: { ...TaskObject } }` |
+| **PATCH** | `/tasks/reorder` | Reorder task list | `{ taskIds: string[] }` | `{ tasks: [{ ...TaskObject }] }` |
+| **DELETE**| `/tasks/:id` | Delete a task | None | `{ message: "Task deleted", task: { ...DeletedTaskObject } }` |
+
+## Project Structure
+```text
+Project-/
+├── client/                 # Frontend React Application
+│   ├── src/
+│   │   ├── api/            # API fetch wrappers (tasks.js)
+│   │   ├── components/     # Reusable UI components (TaskForm, TaskList, etc.)
+│   │   ├── hooks/          # Custom React hooks (useTasks.js)
+│   │   ├── utils/          # Helper functions (dateUtils.js)
+│   │   ├── App.jsx         # Main application layout
+│   │   └── main.jsx        # React DOM entry point
+│   ├── index.html          # Vite HTML entry
+│   └── package.json        # Frontend dependencies
+├── server/                 # Backend Node.js/Express Application
+│   ├── __tests__/          # Automated API tests (Jest)
+│   ├── data/               # Persistent JSON storage
+│   │   └── tasks.json      # The flat-file database
+│   ├── middleware/         # Express middlewares (error handlers, validation)
+│   ├── routes/             # API route definitions (tasks.js)
+│   ├── services/           # Core business logic (taskService.js)
+│   ├── app.js              # Express app configuration
+│   ├── server.js           # Server entry point
+│   └── package.json        # Backend dependencies
+├── .gitignore              # Git ignore rules for node_modules and .env
+└── README.md               # Project documentation
 ```
+
+## Next Steps
+**What was deliberately left out:**
+- A robust relational database (like PostgreSQL or MongoDB) was skipped in favor of a JSON file to drastically reduce setup complexity and focus purely on core CRUD mechanics.
+- User authentication and multi-user tenancy were omitted to keep the scope strictly focused on a *personal* task manager.
+
+**What I would build next:**
+- **Database Migration:** Swap out the `tasks.json` file for MongoDB/Mongoose to support infinite horizontal scaling and concurrent writing safely.
+- **Authentication:** Integrate NextAuth or Firebase to allow multiple users to securely manage their own separate task lists.
+- **Push Notifications:** Add web push notifications or email reminders via SendGrid for tasks that are approaching their due dates.
+- **Categories & Tags:** Allow users to group tasks into different projects or tag them with custom labels for better organization.
